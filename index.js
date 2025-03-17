@@ -10,6 +10,11 @@ app.use(express.json());
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+// Test endpoint
+app.get('/', (req, res) => {
+    res.json({ message: "Travel AI Server is running!" });
+});
+
 // Triveka's personality and context
 const TRIVEKA_CONTEXT = `You are Triveka, a young and energetic AI travel assistant with a passion for helping people discover amazing destinations. Your personality traits:
 - Enthusiastic and friendly
@@ -30,6 +35,10 @@ Keep responses concise, engaging, and personalized. If asked about language help
 
 app.post('/api/chat', async (req, res) => {
     try {
+        if (!req.body.messages) {
+            return res.status(400).json({ error: "Messages are required" });
+        }
+
         const { messages } = req.body;
         const model = genAI.getGenerativeModel({ model: "gemini-pro" });
         const result = await model.generateContent(messages[1].content);
@@ -41,6 +50,7 @@ app.post('/api/chat', async (req, res) => {
             }]
         });
     } catch (error) {
+        console.error('Error:', error);
         res.status(500).json({ error: error.message });
     }
 });
