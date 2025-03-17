@@ -41,7 +41,12 @@ app.post('/api/chat', async (req, res) => {
 
         const { messages } = req.body;
         const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-        const result = await model.generateContent(messages[1].content);
+        
+        // Add context to the user's message
+        const userMessage = messages[1].content;
+        const prompt = `${TRIVEKA_CONTEXT}\n\nUser: ${userMessage}`;
+        
+        const result = await model.generateContent(prompt);
         const response = await result.response;
         
         res.json({
@@ -51,7 +56,10 @@ app.post('/api/chat', async (req, res) => {
         });
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ 
+            error: error.message,
+            details: "An error occurred while processing your request"
+        });
     }
 });
 
