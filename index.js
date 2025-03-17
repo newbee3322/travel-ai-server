@@ -40,7 +40,7 @@ app.post('/api/chat', async (req, res) => {
         }
 
         const { messages } = req.body;
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
         
         // Add context to the user's message
         const userMessage = messages[1].content;
